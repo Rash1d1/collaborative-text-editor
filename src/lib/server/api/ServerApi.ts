@@ -50,7 +50,7 @@ export default class ServerApi {
     );
     this.setupSocketHandlers();
   }
-  
+
   // Usage of the operations on socket
   private setupSocketHandlers(): void {
     this.io.on("connection", (socket: SocketClient) => {

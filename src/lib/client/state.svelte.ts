@@ -27,7 +27,7 @@ class ClientApi {
   }
 
   private setupSocketHandlers() {
-     // Central handler for real-time document updates
+    // Central handler for real-time document updates
     this.io.on("sendUpdateMessage", (document) => {
       this.onMessageCallbacks.forEach((callback) => {
         callback(document);
@@ -94,7 +94,7 @@ class ClientApi {
   public onGetAllDocuments(callback: GetAllDocumentsCallback): () => void {
     const callbackId = crypto.randomUUID(); // Unique ID for safe callback management
     this.getAllDocumentsCallbacks.set(callbackId, callback);
-    
+
     // Return cleanup function to prevent memory leaks
     return () => {
       this.getAllDocumentsCallbacks.delete(callbackId);

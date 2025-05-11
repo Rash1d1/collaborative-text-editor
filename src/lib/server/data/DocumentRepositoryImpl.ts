@@ -6,7 +6,7 @@ import {
 } from "$lib/server/domain/entities/DocumentEntity";
 import type DocumentRepository from "$lib/server/domain/repositories/DocumentRepository";
 
-// Implementation of the Document Repo functionality 
+// Implementation of the Document Repo functionality
 export default class DocumentRepositoryImpl implements DocumentRepository {
   private id = 0; // Simple counter-based ID generation
   private documents = new Map<string, DocumentEntity>(); // In-memory document storage (on RAM of localhost)
@@ -49,7 +49,7 @@ export default class DocumentRepositoryImpl implements DocumentRepository {
     if (!existingDoc) {
       throw new Error(`Document with id ${docId.id} not found`);
     }
-    
+
     // Maintain version history when content changes
     if (document.content !== existingDoc.content) {
       // Trim history beyond current version before adding new entry

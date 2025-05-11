@@ -6,7 +6,7 @@ import { defineConfig } from "vite";
 
 export default defineConfig({
   preview: {
-    allowedHosts: ['collaborative-text-editor-71mz.onrender.com']
+    allowedHosts: ["collaborative-text-editor-71mz.onrender.com"],
   },
   plugins: [
     tailwindcss(),

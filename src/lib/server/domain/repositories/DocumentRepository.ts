@@ -12,7 +12,7 @@ export default interface DocumentRepository {
   deleteDocument(docId: DocumentId): DocumentId;
   undo(docId: DocumentId): DocumentEntity | undefined;
   redo(docId: DocumentId): DocumentEntity | undefined;
-  
+
   getDocument(docId: DocumentId): DocumentEntity | undefined;
   getAllDocuments(): DocumentId[];
   getVersionHistory(docId: DocumentId): VersionEntry[];

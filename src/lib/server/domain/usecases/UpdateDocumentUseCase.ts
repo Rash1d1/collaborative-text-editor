@@ -36,7 +36,7 @@ export default class UpdateDocumentUseCase {
     };
 
     this.documentRepo.updateDocument(docId, updatedDocument);
-    
+
     // Broadcast successful update to all clients in the document's room
     this.socketRepo.broadcast(docId, { ok: true, data: updatedDocument });
   }

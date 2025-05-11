@@ -13,7 +13,7 @@ import JumpDocumentUseCase from "./usecases/JumpDocumentUseCase";
 
 // Centralized access point for all use cases
 export default class UseCaseContainer {
-  createDocument: CreateDocumentUseCase; 
+  createDocument: CreateDocumentUseCase;
   deleteDocument: DeleteDocumentUseCase;
   enterDocument: EnterDocumentUseCase;
   exitDocument: ExitDocumentUseCase;
@@ -23,7 +23,6 @@ export default class UseCaseContainer {
   getDocument: GetDocumentUseCase;
   getAllDocuments: GetAllDocumentsUseCase;
   jumpDocument: JumpDocumentUseCase;
-  
 
   constructor(
     private documentRepo: DocumentRepository,

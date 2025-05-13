@@ -7,7 +7,7 @@ import type { Message } from "$lib/server/domain/repositories/SocketRepository";
 import type { ResponseMessage } from "$lib/server/domain/entities/ResponseMessage";
 import type { versionIndex } from "$lib/server/domain/entities/DocumentEntity";
 
-import { v4 as uuidv4 } from 'uuid';
+import { v4 as uuidv4 } from "uuid";
 
 if (!crypto.randomUUID) {
   crypto.randomUUID = () => uuidv4();
@@ -25,7 +25,7 @@ class ClientApi {
 
   constructor(serverUrl: string) {
     this.io = io(serverUrl, {
-      path: '/socket.io',
+      path: "/socket.io",
       autoConnect: true, // Automatically establish connection on creation
       reconnection: true, // Enable automatic reconnection attempts
       transports: ["websocket"], // Force WebSocket transport only

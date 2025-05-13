@@ -6,25 +6,24 @@ import { defineConfig } from "vite";
 
 export default defineConfig({
   preview: {
-    host: '0.0.0.0',
+    host: "0.0.0.0",
     proxy: {
-      '/socket.io': {
-        target: 'http://localhost:8952',
+      "/socket.io": {
+        target: "http://localhost:8952",
         ws: true, // Enable WebSocket proxying for Socket.IO
         changeOrigin: true,
-        }
-    }
+      },
+    },
   },
   server: {
-    host: '0.0.0.0',
+    host: "0.0.0.0",
     proxy: {
-      '/socket.io': {
-        target: 'http://localhost:8952',
+      "/socket.io": {
+        target: "http://localhost:8952",
         ws: true, // Enable WebSocket proxying for Socket.IO
         changeOrigin: true,
-      
-      }
-    }
+      },
+    },
   },
   plugins: [
     tailwindcss(),

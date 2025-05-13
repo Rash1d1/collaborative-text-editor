@@ -7,6 +7,12 @@ import type { Message } from "$lib/server/domain/repositories/SocketRepository";
 import type { ResponseMessage } from "$lib/server/domain/entities/ResponseMessage";
 import type { versionIndex } from "$lib/server/domain/entities/DocumentEntity";
 
+import { v4 as uuidv4 } from 'uuid';
+
+if (!crypto.randomUUID) {
+  crypto.randomUUID = () => uuidv4();
+}
+
 // Using Map with UUID keys to handle multiple subscribers and allow clean cleanup
 type OnMessageCallback = (message: ResponseMessage) => void;
 type GetAllDocumentsCallback = (documentIds: DocumentId[]) => void;
@@ -19,6 +25,7 @@ class ClientApi {
 
   constructor(serverUrl: string) {
     this.io = io(serverUrl, {
+      path: '/socket.io',
       autoConnect: true, // Automatically establish connection on creation
       reconnection: true, // Enable automatic reconnection attempts
       transports: ["websocket"], // Force WebSocket transport only
@@ -113,7 +120,7 @@ class ClientApi {
 }
 
 // Svelte's $state for reactive store management
-export const api = $state(new ClientApi("http://localhost:8952/"));
+export const api = $state(new ClientApi("http://217.19.4.30:4173/"));
 
 // Reactive document list synchronized with server state
 export const documentIds = $state({ value: [] as DocumentId[] });

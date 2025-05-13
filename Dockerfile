@@ -19,6 +19,9 @@ RUN pnpm install --frozen-lockfile --prod=false
 # Copy source files
 COPY ./ ./
 
+# Run svelte-kit sync to generate .svelte-kit/tsconfig.json
+RUN pnpm prepare
+
 # Build application
 RUN pnpm build
 

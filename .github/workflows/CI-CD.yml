@@ -61,5 +61,5 @@ jobs:
           key: ${{ secrets.SSH_KEY }}
           script: |
             docker pull j0cos/collaborative-text-editor:latest
-            docker-compose -f /root/collaborative-text-editor-2/compose.yaml down
-            docker-compose -f /root/collaborative-text-editor-2/compose.yaml up -d
+            docker-compose -f /root/project/compose.yaml down
+            docker-compose -f /root/project/compose.yaml up -d

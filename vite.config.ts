@@ -6,7 +6,25 @@ import { defineConfig } from "vite";
 
 export default defineConfig({
   preview: {
-    allowedHosts: ["collaborative-text-editor-71mz.onrender.com"],
+    host: '0.0.0.0',
+    proxy: {
+      '/socket.io': {
+        target: 'http://localhost:8952',
+        ws: true, // Enable WebSocket proxying for Socket.IO
+        changeOrigin: true,
+        }
+    }
+  },
+  server: {
+    host: '0.0.0.0',
+    proxy: {
+      '/socket.io': {
+        target: 'http://localhost:8952',
+        ws: true, // Enable WebSocket proxying for Socket.IO
+        changeOrigin: true,
+      
+      }
+    }
   },
   plugins: [
     tailwindcss(),

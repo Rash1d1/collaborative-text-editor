@@ -19,11 +19,23 @@ client.collectDefaultMetrics();
 // Use the default global registry
 const register = client.register;
 
-// Create a custom counter metric for Socket.IO connections
-const connectedClients = new client.Counter({
-  name: "socketio_connections_total",
-  help: "Total number of connected Socket.IO clients",
-  labelNames: ["status"],
+const currentConnectedClients = new client.Gauge({
+  name: "socketio_current_connected_clients",
+  help: "Current number of connected Socket.IO clients",
+  labelNames: [],
+});
+
+// New custom metrics
+const documentUpdates = new client.Counter({
+  name: "document_updates_total",
+  help: "Total number of document updates",
+  labelNames: ["docId"],
+});
+
+const documentActions = new client.Counter({
+  name: "document_actions_total",
+  help: "Total number of document actions (create, delete, undo, redo)",
+  labelNames: ["action"],
 });
 
 export default class ServerApi {
@@ -35,8 +47,8 @@ export default class ServerApi {
     never,
     SubscriberData
   >;
+  connectedClientCount: number = 0;
 
-  // Api collects all data from domain and data layers
   documentRepo: DocumentRepository;
   socketRepo: SocketRepository;
   useCaseContainer: UseCaseContainer;
@@ -78,16 +90,17 @@ export default class ServerApi {
     });
   }
 
-  // Usage of the operations on socket
   private setupSocketHandlers(): void {
     this.io.on("connection", (socket: SocketClient) => {
       console.log(`Client connected: ${socket.id}`);
 
-      connectedClients.inc({ status: "connected" });
+      this.connectedClientCount++;
+      currentConnectedClients.set(this.connectedClientCount);
 
       socket.on("disconnect", () => {
         console.log(`Client disconnected: ${socket.id}`);
-        connectedClients.inc({ status: "disconnected" });
+        this.connectedClientCount--;
+        currentConnectedClients.set(this.connectedClientCount);
       });
 
       socket.on("enterDocument", async (docId) => {
@@ -114,45 +127,39 @@ export default class ServerApi {
         console.log(
           `Client [${socket.id}] updated document: ${docId.id} with new content: ${newContent}`,
         );
+        documentUpdates.inc({ docId: docId.id.toString() }); // Track updates per document
       });
 
       socket.on("createDocument", () => {
         this.useCaseContainer.createDocument.invoke();
+        documentActions.inc({ action: "create" });
       });
 
       socket.on("deleteDocument", (docId) => {
         this.useCaseContainer.deleteDocument.invoke(docId);
+        documentActions.inc({ action: "delete" });
       });
 
       socket.on("undo", (docId) => {
         this.useCaseContainer.undoDocument.invoke(docId);
-        console.log(
-          `Client [${socket.id}] performed undo on document: ${docId.id}`,
-        );
+        documentActions.inc({ action: "undo" });
       });
 
       socket.on("redo", (docId) => {
         this.useCaseContainer.redoDocument.invoke(docId);
-        console.log(
-          `Client [${socket.id}] performed redo on document: ${docId.id}`,
-        );
+        documentActions.inc({ action: "redo" });
       });
 
       socket.on("getAllDocuments", () => {
         this.useCaseContainer.getAllDocuments.invoke(socket);
-        console.log(`Client [${socket.id}] gets all documents`);
       });
 
       socket.on("getDocument", (docId) => {
         this.useCaseContainer.getDocument.invoke(socket, docId);
-        console.log(`Client [${socket.id}] gets document: ${docId.id}`);
       });
 
       socket.on("jump", (docId, versionIndex) => {
         this.useCaseContainer.jumpDocument.invoke(docId, versionIndex);
-        console.log(
-          `Client [${socket.id}] jumps to version ${versionIndex.toString()}: ${docId.id}`,
-        );
       });
     });
   }

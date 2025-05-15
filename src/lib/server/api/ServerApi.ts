@@ -11,6 +11,22 @@ import { type SubscriberData } from "$lib/server/domain/entities/SubscriberData"
 import type DocumentRepository from "$lib/server/domain/repositories/DocumentRepository";
 import type SocketRepository from "$lib/server/domain/repositories/SocketRepository";
 import UseCaseContainer from "$lib/server/domain/UseCaseContainer";
+import client from 'prom-client';
+import http from 'http';
+
+
+client.collectDefaultMetrics();
+
+// Use the default global registry
+const register = client.register;
+
+// Create a custom counter metric for Socket.IO connections
+const connectedClients = new client.Counter({
+  name: 'socketio_connections_total',
+  help: 'Total number of connected Socket.IO clients',
+  labelNames: ['status'],
+});
+
 
 export default class ServerApi {
   app: Express;
@@ -29,7 +45,7 @@ export default class ServerApi {
 
   constructor() {
     this.app = express();
-    this.server = createServer();
+    this.server = createServer(this.app);
     this.io = new IoServer<
       ClientToServerEvents,
       ServerToClientEvents,
@@ -49,12 +65,32 @@ export default class ServerApi {
       this.socketRepo,
     );
     this.setupSocketHandlers();
-  }
+
+    // Metrics endpoint
+    this.app.get('/metrics', async (req, res) => {
+      try {
+        res.setHeader('Content-Type', register.contentType);
+        const metrics = await register.metrics();
+        res.end(metrics);
+      } catch (err) {
+        console.error('Error generating metrics:', err);
+        res.statusCode = 500;
+        res.end('Internal Server Error');
+      }
+    });
+  } 
 
   // Usage of the operations on socket
   private setupSocketHandlers(): void {
     this.io.on("connection", (socket: SocketClient) => {
       console.log(`Client connected: ${socket.id}`);
+
+      connectedClients.inc({ status: 'connected' });
+
+      socket.on('disconnect', () => {
+        console.log(`Client disconnected: ${socket.id}`);
+        connectedClients.inc({ status: 'disconnected' });
+      });
 
       socket.on("enterDocument", async (docId) => {
         await this.useCaseContainer.enterDocument.invoke(socket, docId);
@@ -123,9 +159,9 @@ export default class ServerApi {
     });
   }
 
-  start(port: number): void {
+  start(port: number) {
     this.server.listen(port, () => {
-      console.log(`Server started on port: ${port.toString()}`);
+      console.log(`Server started on port: ${port}`);
     });
   }
 }

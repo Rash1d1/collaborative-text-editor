@@ -1,7 +1,0 @@
-services:
-  app:
-    build: ./
-    network_mode: host
-    environment:
-      - NODE_ENV=production
-    restart: unless-stopped

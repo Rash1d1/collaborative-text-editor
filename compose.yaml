@@ -1,4 +1,5 @@
 version: "3.8"
+
 services:
   app:
     image: j0cos/collaborative-text-editor:latest
@@ -50,6 +51,6 @@ services:
       - grafana-data:/var/lib/grafana
     restart: unless-stopped
 
-
+#volumes:
 volumes:
   grafana-data:

@@ -38,7 +38,7 @@ To create a production version of your app:
 ```bash
 pnpm run build
 
-Demo check pipeline
+Demo check
 ```
 
 You can preview the production build with `pnpm run preview`.

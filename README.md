@@ -23,6 +23,8 @@ This automation ensures that configuration updates are seamlessly applied to the
 ---
 ### 🔗 Relevant Links
 
+#### (IMPORTANT NOTE: running server is stopped as the project`s support have ended)
+
 Access the deployed application, monitoring dashboards, and Docker registry using the links below:
 
 - **Running Application**: [http://217.19.4.30:4173](http://217.19.4.30:4173)  
